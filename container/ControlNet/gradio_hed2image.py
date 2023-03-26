@@ -75,7 +75,7 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
     image = np.array(image)
 
     results = [image[i] for i in range(num_samples)]
-    print(results)
+#     print(results)
     return [detected_map] + results
 
 
