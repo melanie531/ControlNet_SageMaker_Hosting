@@ -13,7 +13,7 @@
 
 # For more information on creating a Dockerfile
 # https://docs.docker.com/compose/gettingstarted/#step-2-create-a-dockerfile
-# https://github.com/awslabs/amazon-sagemaker-examples/master/advanced_functionality/pytorch_extending_our_containers/pytorch_extending_our_containers.ipynb
+
 ARG REGION=us-east-1
 
 # SageMaker PyTorch image
@@ -34,6 +34,7 @@ RUN pip --no-cache-dir install flask gunicorn
 
 ENV PYTHONUNBUFFERED=TRUE
 ENV PYTHONDONTWRITEBYTECODE=TRUE
+ENV region=us-east-1
 ENV PATH="/opt/program:${PATH}"
 
 # Set up the program in the image

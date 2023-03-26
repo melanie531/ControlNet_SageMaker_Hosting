@@ -9,6 +9,7 @@ import torch
 import random
 import base64
 import json
+import os
 
 from pytorch_lightning import seed_everything
 from annotator.util import resize_image, HWC3
@@ -18,14 +19,17 @@ from cldm.ddim_hacked import DDIMSampler
 
 
 import sagemaker
-from sagemaker import get_execution_role
 import boto3
-sm_runtime = boto3.client("sagemaker-runtime")
 
-role = get_execution_role()
-sess = sagemaker.Session()
-account = sess.boto_session.client("sts").get_caller_identity()["Account"]
-region = sess.boto_session.region_name
+region = os.environ['region']
+boto_session = boto3.Session(region_name=region)
+sagemaker_client = boto_session.client("sagemaker")
+sess = sagemaker.session.Session(
+    boto_session=boto_session,
+    sagemaker_client=sagemaker_client
+)
+role = sess.get_caller_identity_arn()
+sm_runtime = boto3.client("sagemaker-runtime", region_name=region)
 
 
 apply_hed = HEDdetector()
@@ -59,7 +63,7 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
         "C": C
            }
 #     print([f"{x}, {type(x)}, {type(data[x])}" for x in data])
-    endpoint_name = "gai-demo-2023-03-26-00-45-06-2023-03-26-00-45-08-177"
+    endpoint_name = "sagemaker-gai-demo-2023-03-26-05-54-16"
     response = sm_runtime.invoke_endpoint(
         EndpointName=endpoint_name,
         Body=json.dumps(data),

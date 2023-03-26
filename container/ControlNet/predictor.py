@@ -27,7 +27,7 @@ from cldm.model import create_model, load_state_dict
 from cldm.ddim_hacked import DDIMSampler
 
 apply_hed = HEDdetector()
-
+model_dir = "/opt/ml/model"
 
 class ScoringService(object):
     model = None  # Where we keep the model when it's loaded
@@ -36,8 +36,8 @@ class ScoringService(object):
     def get_model(cls):
         """Get the model object for this instance, loading it if it's not already loaded."""
         if cls.model == None:
-            cls.model = create_model('./models/cldm_v15.yaml').cpu()
-            cls.model.load_state_dict(load_state_dict('./models/control_sd15_hed.pth', location='cuda'))
+            cls.model = create_model(f'{model_dir}/cldm_v15.yaml').cpu()
+            cls.model.load_state_dict(load_state_dict(f'{model_dir}/control_sd15_hed.pth', location='cuda'))
             cls.model = cls.model.cuda()
         return cls.model
     
