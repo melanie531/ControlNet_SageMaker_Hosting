@@ -5,7 +5,7 @@ This project demonstartes how to deploy the pretrained Stable Diffusion model on
 Here are the step-by-step instructions:
 
 ### Step 1: Prepare and build container for model hosting on SageMaker
-To build the docker image for model hosting, we will extend the prebuilt pytorch container and `nginex + gunicorn` as reverse server. If you want to learn more about bringing your own container for model training and hosting, you can refer to the [scikit learn bring your own example on github](https://github.com/aws/amazon-sagemaker-examples/tree/main/advanced_functionality/scikit_bring_your_own/container).
+To build the docker image for model hosting, we will extend the prebuilt pytorch container and `nginex + gunicorn` as reverse server. If you want to learn more about bringing your own container for model training and hosting, you can refer to the [scikit learn bring your own example on github](https://github.com/aws/amazon-sagemaker-examples/tree/main/advanced_functionality/scikit_bring_your_own/container). Note that, you can also use the prebuilt pytorch hosting  container to host the pre-trained model by leveraging the `entrypoint script` and `requirements.txt` files to configure the environment at run-time.  
 
 Please note that, as the docker container can be quite big and the default docker storage on the instance default disck may not be enough. So when building the docker image on SageMaker notebook instances, we recommended to leverage the attached EBS volume (under /home/ec2-user/SageMaker) to store the docker images. This volume can be increased as needed, but you will not be able to reduce the EBS volume size once it is increased. On the SageMaker notebook instance, open a terminal and go to the SageMaker folder and clone the git repo:
 
