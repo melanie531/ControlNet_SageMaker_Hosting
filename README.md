@@ -10,33 +10,46 @@ To build the docker image for model hosting, we will extend the prebuilt pytorch
 Please note that, as the docker container can be quite big and the default docker storage on the instance default disck may not be enough. So when building the docker image on SageMaker notebook instances, we recommended to leverage the attached EBS volume (under /home/ec2-user/SageMaker) to store the docker images. This volume can be increased as needed, but you will not be able to reduce the EBS volume size once it is increased. On the SageMaker notebook instance, open a terminal and go to the SageMaker folder and clone the git repo:
 
 ```
-$ cd /home/ec2-user/SageMaker
-$ git clone https://github.com/melanie531/ControlNet_SageMaker_Hosting.git
-$ cd ControlNet_SageMaker_Hosting
+cd /home/ec2-user/SageMaker
+git clone https://github.com/melanie531/ControlNet_SageMaker_Hosting.git
+cd ControlNet_SageMaker_Hosting
 
 ```
 
 Then run the below command to prepare the docker environment:
 
 ```
-$ /bin/bash prepare-docker.sh
+/bin/bash prepare-docker.sh
 ```
 
 Next, we will go to the container directly where the *Dockerfile* is stored and build and push the docker image to ECR:
 
 ```
-$ /bin/bash build_and_push.sh <your-docker-image-name>
+/bin/bash build_and_push.sh <your-docker-image-name>
 ```
 
 In the docker image name field, you can specify the name of the docker image, such as **sagemaker-gai-controlnet-hosting**. This step might take a bit longer time if this is the first time you are building the docker image and push it to ECR. Once the image is pushed to ECR, we can move to the next step to deploy the model using this docker image to a SageMaker endpoint.
 
 ### Step 2: Deploy the pretrained model to a SageMaker endpoint and invoke endpoint with test data
 
-Notebook **SageMaker_GAI_deploy_ControlNet.ipynb**
+In this step, we will use the notebook **SageMaker_GAI_deploy_ControlNet.ipynb** to prepare the model artifacts and deploy the model to a SageMaker endpoint for inference. All the pretrained models of ControlNet can be found in their [Hugging Face page](https://huggingface.co/lllyasviel/ControlNet). In this example, we will use the [`control_sd15_hed.pth` ](https://huggingface.co/lllyasviel/ControlNet/blob/main/models/control_sd15_hed.pth) model. You can go to the model page and use the [download link ](https://huggingface.co/lllyasviel/ControlNet/resolve/main/models/control_sd15_hed.pth) to download the model artifacts to your local machine and upload to the SageMaker notebook folder `ControlNet_SageMaker_Hosting/models`. The folder structure should be like:
 
+![model_structure](./img/model_folder_structure.png)
+
+Once the model data is downloaded, you can follow through the notebook to execute each cell and deploy the model to a SageMaker endpoint and perform testing with the sample json data `data.json`.
 
 ### Step 3: Build conda environment and launch Gradio web UI to provide interactive user experience
 
-Notebook **test_SageMaker_GAI_endpoint.ipynb**
+To execute the Gradio UI, we will build a custom conda kernel for the notebook **test_SageMaker_GAI_endpoint.ipynb**. In the terminal session (*assuming you are under the ControlNet_SageMaker_Hosting folder*, run the follow code:
 
+
+```
+cd container/ControlNet
+conda env create -f environment.yaml
+source activate control
+conda install -c anaconda ipykernel
+python -m ipykernel install --user --name=control
+```
+
+#### Additional resources
 Note that, this git repository is adopted from the [ControlNet](https://github.com/lllyasviel/ControlNet) open source project. To understand more of the ControlNet neural network structure, please refer to the [source git repository](https://github.com/lllyasviel/ControlNet).

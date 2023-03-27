@@ -62,8 +62,8 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
         "W": W, 
         "C": C
            }
-#     print([f"{x}, {type(x)}, {type(data[x])}" for x in data])
-    endpoint_name = "sagemaker-gai-demo-2023-03-26-05-54-16"
+
+    endpoint_name = os.environ['endpoint_name']
     response = sm_runtime.invoke_endpoint(
         EndpointName=endpoint_name,
         Body=json.dumps(data),
@@ -75,7 +75,6 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
     image = np.array(image)
 
     results = [image[i] for i in range(num_samples)]
-#     print(results)
     return [detected_map] + results
 
 
